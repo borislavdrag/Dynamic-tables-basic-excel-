@@ -60,8 +60,42 @@ const Cell& Table::getCell(int row, int col) const
 
 //Setter
 
-void Table::setCell(int row, int col, int type, int intVal, double doubleVal, char* stringVal)
+void Table::setCell(int row, int col, int type, int intVal, double doubleVal, const char* stringVal)
 {
+    if (row >= this->nRows)
+    {
+        Cell** table2 = new Cell*[row+1];
+        for (int i = 0; i <= row; i++)
+        {
+            if(i < this->nRows) 
+                table2[i] = this->table[i];
+            else
+                table2[i] = new Cell[nCols];
+        }
+
+        delete [] this->table;
+        this->table = table2;
+        this->nRows = row+1;
+    }
+    else if (col >= this->nCols)
+    {
+        Cell** table2 = new Cell*[nRows];
+
+        for (int i = 0; i < nRows; i++)
+            table2[i] = new Cell[col+1];
+
+        for (int i = 0; i < nRows; i++)
+            for (int j = 0; j <= col; j++)
+                if (j < this->nCols)
+                    table2[i][j] = this->table[i][j];            
+        
+
+        delete [] this->table;
+        this->table = table2;
+        this->nCols = col+1;
+    }
+    
+    
     switch (type)
     {
     case 0:
@@ -149,10 +183,7 @@ void Table::print()
         }
         std::cout << std::endl; 
     }
-    
-        
-    
-
+    std::cout << std::endl; 
     delete [] paddings;
 }
 

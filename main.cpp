@@ -68,4 +68,11 @@ int main()
     t.setCell(0, 1, 1, 0, 5.989);
     t.setCell(1, 2, 2, 0, 0, "abcd");
     t.print();
+
+    t.setCell(3, 1, 0, 66666);
+    t.print();
+    t.setCell(0, 4, 2, 0, 0, "66666");
+    t.print();
+    t.setCell(7, 4, 2, 0, 0, "bobby is weird");
+    t.print();
 }
