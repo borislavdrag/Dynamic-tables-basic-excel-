@@ -8,7 +8,7 @@ int numlen(int a)
 
 int numlen(double a)
 {
-    return numlen((int) a)  + 3;
+    return numlen((int) a) + PRECISION;
 }
 
 Table::Table(int nRows, int nCols)
@@ -167,7 +167,7 @@ void Table::print()
                 std::cout << std::left << std::setw(paddings[j]) << table[i][j].getIntValue();
                 break;
             case 1:
-                std::cout << std::left << std::setw(paddings[j]) << std::setprecision(3) << table[i][j].getDoubleValue();
+                std::cout << std::left << std::setw(paddings[j]) << std::setprecision(PRECISION) << table[i][j].getDoubleValue();
                 break;
             case 2:
                 std::cout << std::left << std::setw(paddings[j]) << table[i][j].getStringValue();
@@ -213,9 +213,65 @@ void Table::copy(const Table& other)
 
 bool Table::load(std::fstream& in)
 {
+    if(!in.good())
+        return 0;
+
+    // while(std::getline(in, test)
+    // {
+
+    // }
     return 1;
 }
 bool Table::save(std::fstream& out)
 {
+    if(!out.good())
+        return 0;
+
+    for (int i = 0; i < this->nRows; i++)
+    {
+        for (int j = 0; j < this->nCols; j++)
+        {
+            switch (this->table[i][j].getType())
+            {
+            case 0:
+                out << this->table[i][j].getIntValue();
+                if (j < this->nCols - 1)
+                    out << ",";
+                else
+                    out << "\n";
+                break;
+
+                case 1:
+                out << std::setprecision(PRECISION) << this->table[i][j].getDoubleValue();
+                if (j < this->nCols - 1)
+                    out << ",";
+                else
+                    out << "\n";
+                break;
+
+                case 2:
+                out << this->table[i][j].getStringValue();
+                if (j < this->nCols - 1)
+                    out << ",";
+                else
+                    out << "\n";
+                break;
+                // case 3:
+                // out << this->table[i][j].getIntValue();
+                // if (j < this->nCols - 1)
+                //     out << ",";
+                // else
+                //     out << "\n";
+                // break;
+            
+            default:
+                if (j < this->nCols - 1)
+                    out << ",";
+                else
+                    out << "\n";
+                break;
+            }
+        }
+    }
     return 1;
 }

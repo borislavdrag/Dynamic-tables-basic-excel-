@@ -109,7 +109,7 @@ void Cell::printVal()
         std::cout << getIntValue();
         break;
     case 1:
-        std::cout << std::setprecision(3) << getDoubleValue();
+        std::cout << std::setprecision(PRECISION) << getDoubleValue();
         break;
     case 2:
         std::cout << getStringValue();

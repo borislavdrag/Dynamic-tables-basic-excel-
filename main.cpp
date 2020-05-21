@@ -69,10 +69,14 @@ int main()
     t.setCell(1, 2, 2, 0, 0, "abcd");
     t.print();
 
-    t.setCell(3, 1, 0, 66666);
-    t.print();
-    t.setCell(0, 4, 2, 0, 0, "66666");
-    t.print();
-    t.setCell(7, 4, 2, 0, 0, "bobby is weird");
-    t.print();
+    // t.setCell(3, 1, 0, 66666);
+    // t.print();
+    // t.setCell(0, 4, 2, 0, 0, "66666");
+    // t.print();
+    // t.setCell(7, 4, 2, 0, 0, "bobby is weird");
+    // t.print();
+
+    fstream out;
+    out.open("test1.csv", fstream::out | fstream::trunc);
+    t.save(out);
 }
