@@ -58,7 +58,14 @@ int main()
     //     cout << command2 << endl;
     // }
 
-    Cell cell(0, 0, 2);
-    cell.setStringValue("abcdef");
+    Cell cell(0, 0, 1);
+    cell.setDoubleValue(1.9885);
     cell.print();
+
+    Table t;
+    t.setCell(0, 0, 0, 5);
+    t.setCell(1, 0, 0, 177);
+    t.setCell(0, 1, 1, 0, 5.989);
+    t.setCell(1, 2, 2, 0, 0, "abcd");
+    t.print();
 }

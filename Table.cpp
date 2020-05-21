@@ -1,4 +1,15 @@
 #include "Table.h"
+#include <cmath>
+
+int numlen(int a)
+{
+    return trunc(log10(a)) + 1;
+}
+
+int numlen(double a)
+{
+    return numlen((int) a)  + 3;
+}
 
 Table::Table(int nRows, int nCols)
 {
@@ -78,23 +89,25 @@ void Table::print()
     for (int i = 0; i < nCols; i++)
         paddings[i] = 0;
     
+    int len = 0;
     for (int i = 0; i < nRows; i++)
         for (int j = 0; j < nCols; j++)
         {
+            len = 0;
             switch (this->table[i][j].getType())
             {
             case 0:
-                int len = strlen(itoa(this->table[i][j].getIntValue()));
+                len = numlen(this->table[i][j].getIntValue());
                 if(len > paddings[j])
                     paddings[j] = len;
                 break;
             case 1:
-                int len = strlen(itoa(this->table[i][j].getDoubleValue()));
+                len = numlen(this->table[i][j].getDoubleValue());
                 if(len > paddings[j])
                     paddings[j] = len;
                 break;
             case 2:
-                int len = strlen(this->table[i][j].getStringValue());
+                len = strlen(this->table[i][j].getStringValue());
                 if(len > paddings[j])
                     paddings[j] = len;
                 break;
@@ -108,6 +121,35 @@ void Table::print()
                 break;
             }
         }
+
+    for (int i = 0; i < this->nRows; i++)
+    {
+        std::cout << '|';
+        for (int j = 0; j < this->nCols; j++)
+        {
+            switch (table[i][j].getType())
+            {
+            case 0:
+                std::cout << std::left << std::setw(paddings[j]) << table[i][j].getIntValue();
+                break;
+            case 1:
+                std::cout << std::left << std::setw(paddings[j]) << std::setprecision(3) << table[i][j].getDoubleValue();
+                break;
+            case 2:
+                std::cout << std::left << std::setw(paddings[j]) << table[i][j].getStringValue();
+                break;
+            // case 3:
+            //     std::cout << std::left << std::setw(paddings[j]) << table[i][j].getIntValue();
+            //     break;
+            default:
+                std::cout << std::left << std::setw(paddings[j]) << "";
+                break;
+            }
+            std::cout <<'|';
+        }
+        std::cout << std::endl; 
+    }
+    
         
     
 
@@ -140,10 +182,9 @@ void Table::copy(const Table& other)
 
 bool Table::load(std::fstream& in)
 {
-
+    return 1;
 }
-
 bool Table::save(std::fstream& out)
 {
-
+    return 1;
 }

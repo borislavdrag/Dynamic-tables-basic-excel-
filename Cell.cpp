@@ -97,7 +97,8 @@ void Cell::setFormulaValue(const Formula& val)
 void Cell::print()
 {
     std::cout << "R" << this->idRow << "C" << this->idCol << ": ";
-    printVal();    
+    printVal();
+    std::cout << std::endl;
 }
 
 void Cell::printVal()
@@ -105,20 +106,19 @@ void Cell::printVal()
     switch (type)
     {
     case 0:
-        std::cout << getIntValue() << std::endl;
+        std::cout << getIntValue();
         break;
     case 1:
-        std::cout << getDoubleValue() << std::endl;
+        std::cout << std::setprecision(3) << getDoubleValue();
         break;
     case 2:
-        std::cout << getStringValue() << std::endl;
+        std::cout << getStringValue();
         break;
     // case 3:
-    //     std::cout << getFormulaValue() << std::endl;
+    //     std::cout << getFormulaValue();
     //     break;
     
     default:
-        std::cout << std::endl;
         break;
     }
 }
