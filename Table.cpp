@@ -1,6 +1,8 @@
 #include "Table.h"
 #include <cmath>
 
+// Helper functions
+
 int numlen(int a)
 {
     return trunc(log10(a)) + 1;
@@ -8,8 +10,15 @@ int numlen(int a)
 
 int numlen(double a)
 {
-    return numlen((int) a) + PRECISION;
+    return numlen((int) a) + PRECISION + 1;
 }
+
+void clearInputWhitespace(char* line)
+{
+
+}
+
+// Constructors & such
 
 Table::Table(int nRows, int nCols)
 {
@@ -62,6 +71,7 @@ const Cell& Table::getCell(int row, int col) const
 
 void Table::setCell(int row, int col, int type, int intVal, double doubleVal, const char* stringVal)
 {   
+    // std::cout << "Type: " << type << std::endl;
     if (row >= this->nRows || col >= this->nCols)
     {
         if (row >= this->nRows)
@@ -171,7 +181,7 @@ void Table::print()
                 std::cout << std::left << std::setw(paddings[j]) << table[i][j].getIntValue();
                 break;
             case 1:
-                std::cout << std::left << std::setw(paddings[j]) << std::setprecision(PRECISION) << table[i][j].getDoubleValue();
+                std::cout << std::left << std::setw(paddings[j]) << std::fixed << std::setprecision(PRECISION) << table[i][j].getDoubleValue();
                 break;
             case 2:
                 std::cout << std::left << std::setw(paddings[j]) << table[i][j].getStringValue();
@@ -220,19 +230,20 @@ bool Table::load(std::fstream& in)
     if(!in.good())
         return 0;
 
-    char line[1000];
-    char temp[1000];
+    char line[CELL_SIZE];
+    char temp[CELL_SIZE];
 
     int j = 0;
     int i = 0;
     int p = 0;
     int prev = 0;
 
-    bool intFlag = true;
     bool doubleFlag = true;
+    bool point = false;
     bool formulaFlag = true;
+    bool intFlag = true;
     
-    while(in.getline(line, 1000))
+    while(in.getline(line, CELL_SIZE))
     {
         do
         {
@@ -241,16 +252,61 @@ bool Table::load(std::fstream& in)
                 strncpy(temp, line+prev, p-prev);
                 temp[p-prev] = '\0';
 
-                if (numlen(atoi(temp)) == strlen(temp))
+                // check if it's a formula
+                if (temp[0] != '=')
+                    formulaFlag = false;
+
+                // check if it's a double
+                for (int i = 0; i < p-prev; i++)
+                {   
+                    if (temp[i] == '.')
+                    {
+                        if(!point)
+                            point = true;
+                        else
+                        {
+                             doubleFlag = false;
+                             break;
+                        }
+                        
+                    }
+                    else if(temp[i] > '9' || temp[i] < '0')
+                    {
+                        // std::cout << i << " at " << temp << std::endl;
+                        doubleFlag = false;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < p-prev; i++)
+                {
+                    if (temp[i] > '9' || temp[i] < '0')
+                    {
+                        // std::cout << i << " at2 " << temp << std::endl;
+                        intFlag = false;
+                        break;
+                    }
+                }
+                
+                
+                if (intFlag)
                     setCell(i, j, 0, atoi(temp));
-                else if (numlen(atof(temp)) == strlen(temp))
-                    setCell(i, j, 1, 0, atof(temp));
+                else if (doubleFlag)
+                    setCell(i, j, 1, 0, std::round(atof(temp)*std::pow(10.0, PRECISION))/std::pow(10.0, PRECISION));
                 // ADD FORMULA SUPPORT
                 else
+                {
                     setCell(i, j, 2, 0, 0, temp);
+                    // std::cout << "String: " << temp << std::endl;
+                }
 
                 prev = p+1;
                 j++;
+
+                doubleFlag = true;
+                formulaFlag = true;
+                intFlag = true;
+                point = false;
             }
             
         }while(line[p++] != '\0');
