@@ -13,9 +13,18 @@ int numlen(double a)
     return numlen((int) a) + PRECISION + 1;
 }
 
+//Clears space at beginning and end of line and also around commas
 void clearInputWhitespace(char* line)
 {
-
+    int len = strlen(line);
+    for (int i = 0, p = 0; i < len; i++, p++)
+    {
+        if(line[i] == ' ')
+        {
+            p--;
+            
+        }
+    }
 }
 
 // Constructors & such
@@ -272,7 +281,6 @@ bool Table::load(std::fstream& in)
                     }
                     else if(temp[i] > '9' || temp[i] < '0')
                     {
-                        // std::cout << i << " at " << temp << std::endl;
                         doubleFlag = false;
                         break;
                     }
@@ -282,23 +290,20 @@ bool Table::load(std::fstream& in)
                 {
                     if (temp[i] > '9' || temp[i] < '0')
                     {
-                        // std::cout << i << " at2 " << temp << std::endl;
                         intFlag = false;
                         break;
                     }
                 }
                 
-                
-                if (intFlag)
+                if(p-prev == 0) // handle empty cells
+                    {}
+                else if (intFlag)
                     setCell(i, j, 0, atoi(temp));
                 else if (doubleFlag)
                     setCell(i, j, 1, 0, std::round(atof(temp)*std::pow(10.0, PRECISION))/std::pow(10.0, PRECISION));
                 // ADD FORMULA SUPPORT
                 else
-                {
                     setCell(i, j, 2, 0, 0, temp);
-                    // std::cout << "String: " << temp << std::endl;
-                }
 
                 prev = p+1;
                 j++;
@@ -338,7 +343,7 @@ bool Table::save(std::fstream& out)
                 break;
 
                 case 1:
-                out << std::setprecision(PRECISION) << this->table[i][j].getDoubleValue();
+                out << std::fixed << std::setprecision(PRECISION) << this->table[i][j].getDoubleValue();
                 if (j < this->nCols - 1)
                     out << ",";
                 else

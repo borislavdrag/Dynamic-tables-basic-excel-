@@ -81,7 +81,7 @@ int main()
     // t.save(out);
 
     fstream in;
-    in.open("table1.csv", fstream::in);
+    in.open("test1.csv", fstream::in);
     in.seekg(0, fstream::beg);
     t.load(in);
     t.setCell(0, 1, 1, 0, 5.989);
