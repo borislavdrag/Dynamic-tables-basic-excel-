@@ -63,11 +63,11 @@ int main()
     cell.print();
 
     Table t;
-    t.setCell(0, 0, 0, 5);
-    t.setCell(1, 0, 0, 177);
-    t.setCell(0, 1, 1, 0, 5.989);
-    t.setCell(1, 2, 2, 0, 0, "abcd");
-    t.print();
+    // t.setCell(0, 0, 0, 5);
+    // t.setCell(1, 0, 0, 177);
+    // t.setCell(0, 1, 1, 0, 5.989);
+    // t.setCell(1, 2, 2, 0, 0, "abcd");
+    // t.print();
 
     // t.setCell(3, 1, 0, 66666);
     // t.print();
@@ -76,7 +76,14 @@ int main()
     // t.setCell(7, 4, 2, 0, 0, "bobby is weird");
     // t.print();
 
-    fstream out;
-    out.open("test1.csv", fstream::out | fstream::trunc);
-    t.save(out);
+    // fstream out;
+    // out.open("test1.csv", fstream::out | fstream::trunc);
+    // t.save(out);
+
+    fstream in;
+    in.open("table1.csv", fstream::in);
+    in.seekg(0, fstream::beg);
+    t.load(in);
+
+    t.print();
 }

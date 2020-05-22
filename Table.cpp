@@ -216,10 +216,58 @@ bool Table::load(std::fstream& in)
     if(!in.good())
         return 0;
 
-    // while(std::getline(in, test)
-    // {
+    char line[1000];
+    char temp[1000];
 
-    // }
+    // in.getline(line, 1000);
+    int j = 0;
+    int i = 0;
+    int p = 0;
+    int prev = 0;
+
+    bool intFlag = true;
+    bool doubleFlag = true;
+    bool formulaFlag = true;
+    
+    while(in.getline(line, 1000))
+    {
+        do
+        {
+            // std::cout << line[p] << std::endl;
+            if (line[p] == ',' || line[p] == '\0')
+            {
+                // std::cout << p << std::endl;
+                strncpy(temp, line+prev, p-prev);
+                temp[p-prev] = '\0';
+                std::cout << "Temp: " << temp << std::endl;
+                if (numlen(atoi(temp)) == strlen(temp))
+                {
+                    // std::cout << atoi(strncpy(temp, line+prev, p-prev)) << std::endl;
+                    setCell(i, j, 0, atoi(temp));
+                    prev = p+1;
+                }
+                else if (numlen(atof(temp)) == strlen(temp))
+                {
+                    setCell(i, j, 1, 0, atof(temp));
+                    prev = p+1;
+                }
+                // ADD FORMULA SUPPORT
+                else
+                {
+                    setCell(i, j, 2, 0, 0, temp);
+                    prev = p+1;
+                }
+                
+                j++;
+            }
+            
+        }while(line[p++] != '\0');
+        i++;
+        j = 0;
+        prev = 0;
+        p = 0;
+    }
+
     return 1;
 }
 bool Table::save(std::fstream& out)
