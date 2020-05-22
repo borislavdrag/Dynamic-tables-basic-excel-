@@ -61,39 +61,43 @@ const Cell& Table::getCell(int row, int col) const
 //Setter
 
 void Table::setCell(int row, int col, int type, int intVal, double doubleVal, const char* stringVal)
-{
-    if (row >= this->nRows)
+{   
+    if (row >= this->nRows || col >= this->nCols)
     {
-        Cell** table2 = new Cell*[row+1];
-        for (int i = 0; i <= row; i++)
+        if (row >= this->nRows)
         {
-            if(i < this->nRows) 
-                table2[i] = this->table[i];
-            else
-                table2[i] = new Cell[nCols];
+            Cell** table2 = new Cell*[row+1];
+            for (int i = 0; i <= row; i++)
+            {
+                if(i < this->nRows) 
+                    table2[i] = this->table[i];
+                else
+                    table2[i] = new Cell[nCols];
+            }
+
+            delete [] this->table;
+            this->table = table2;
+            this->nRows = row+1;
         }
+        if (col >= this->nCols)
+        {
+            Cell** table2 = new Cell*[nRows];
 
-        delete [] this->table;
-        this->table = table2;
-        this->nRows = row+1;
+            for (int i = 0; i < nRows; i++)
+                table2[i] = new Cell[col+1];
+
+            for (int i = 0; i < nRows; i++)
+                for (int j = 0; j <= col; j++)
+                    if (j < this->nCols)
+                        table2[i][j] = this->table[i][j];            
+            
+
+            delete [] this->table;
+            this->table = table2;
+            this->nCols = col+1;
+        }
     }
-    else if (col >= this->nCols)
-    {
-        Cell** table2 = new Cell*[nRows];
 
-        for (int i = 0; i < nRows; i++)
-            table2[i] = new Cell[col+1];
-
-        for (int i = 0; i < nRows; i++)
-            for (int j = 0; j <= col; j++)
-                if (j < this->nCols)
-                    table2[i][j] = this->table[i][j];            
-        
-
-        delete [] this->table;
-        this->table = table2;
-        this->nCols = col+1;
-    }
     
     
     switch (type)
@@ -219,7 +223,6 @@ bool Table::load(std::fstream& in)
     char line[1000];
     char temp[1000];
 
-    // in.getline(line, 1000);
     int j = 0;
     int i = 0;
     int p = 0;
@@ -233,31 +236,20 @@ bool Table::load(std::fstream& in)
     {
         do
         {
-            // std::cout << line[p] << std::endl;
             if (line[p] == ',' || line[p] == '\0')
             {
-                // std::cout << p << std::endl;
                 strncpy(temp, line+prev, p-prev);
                 temp[p-prev] = '\0';
-                std::cout << "Temp: " << temp << std::endl;
+
                 if (numlen(atoi(temp)) == strlen(temp))
-                {
-                    // std::cout << atoi(strncpy(temp, line+prev, p-prev)) << std::endl;
                     setCell(i, j, 0, atoi(temp));
-                    prev = p+1;
-                }
                 else if (numlen(atof(temp)) == strlen(temp))
-                {
                     setCell(i, j, 1, 0, atof(temp));
-                    prev = p+1;
-                }
                 // ADD FORMULA SUPPORT
                 else
-                {
                     setCell(i, j, 2, 0, 0, temp);
-                    prev = p+1;
-                }
-                
+
+                prev = p+1;
                 j++;
             }
             
