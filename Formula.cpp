@@ -4,41 +4,30 @@
 Formula::Formula(const char* LHS, const char* RHS, const char op)
 {
 
-   
-        int len1 = strlen(LHS);
-       
-        this->LHS = new char[len1+1];
-        strcpy(this->LHS, LHS);
+    int len1 = strlen(LHS);
+    this->LHS = new char[len1+1];
+    strcpy(this->LHS, LHS);
     
-        int len2 = strlen(RHS);
-        this->RHS = new char[len2+1];
-        strcpy(this->RHS, RHS);
+    int len2 = strlen(RHS);
+    this->RHS = new char[len2+1];
+    strcpy(this->RHS, RHS);
 
-    
-   
-     std::cout << 41 << std::endl; 
-    // std::cout << 34 << std::endl;
     this->operation = op;
 }
 
 Formula::~Formula()
 {
-    print();
-    delete[] this->LHS;
-    std::cout << 40 << this << std::endl; 
+    delete[] this->LHS; 
     delete[] this->RHS;
 }
 
 Formula::Formula(const Formula& other)
 {
-    std::cout << 401 << std::endl;
     copy(other);
 }
 
 Formula& Formula::operator=(const Formula& other)
 {
-    std::cout << 401 << std::endl; 
-
     if (this != &other)
     {
         free();
@@ -83,6 +72,8 @@ void Formula::print()
 
 void Formula::copy(const Formula& other)
 {
+    this->LHS = new char[strlen(other.getLHS()) + 1];
+    this->RHS = new char[strlen(other.getRHS()) + 1];
     strcpy(this->LHS, other.getLHS());
     strcpy(this->RHS, other.getRHS());
     this->operation = other.operation;
@@ -93,7 +84,5 @@ void Formula::free()
     delete[] LHS;
     delete[] RHS;
 
-    //LHS = nullptr;
-    //RHS = nullptr;
     operation = '+';
 }

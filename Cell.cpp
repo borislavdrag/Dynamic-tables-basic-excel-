@@ -3,7 +3,6 @@
 
 Cell::Cell(int row, int col, int type)
 {
-    // std::cout << 5 << std::endl;
     this->idRow = row;
     this->idCol = col;
     this->type = type;
@@ -16,9 +15,6 @@ Cell::Cell(int row, int col, int type)
 
 Cell::~Cell()
 {
-    std::cout << this->idRow << ":" << this->idCol << std::endl;
-    this->formulaValue.print();
-    std::cout << this->doubleValue << std::endl;
     delete [] this->stringValue;
 }
 

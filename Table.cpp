@@ -31,12 +31,10 @@ void clearInputWhitespace(char* line)
 
 Table::Table(int nRows, int nCols)
 {
-    std::cout << 1 << std::endl;
     this->nRows = nRows;
     this->nCols = nCols;
 
     this->table = new Cell*[nRows];
-    std::cout << 8 << std::endl;
     for (int i = 0; i < nRows; i++)
         table[i] = new Cell[nCols];
 
@@ -47,8 +45,7 @@ Table::Table(int nRows, int nCols)
             table[i][j].setRow(i);
             table[i][j].setCol(j);
         }
-    }
-    std::cout << 9 << std::endl;
+    };
 }
 
 Table::~Table()
@@ -143,7 +140,6 @@ void Table::setCell(int row, int col, int type, int intVal, double doubleVal, co
         table[row][col].setStringValue(stringVal); 
         break;
     case 3:
-        std::cout << 101 << std::endl;
         table[row][col].setFormulaValue(formulaVal); 
         break;
     default:

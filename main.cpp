@@ -58,7 +58,6 @@ int main()
     //     cout << command2 << endl;
     // }
 
-    std::cout << 1 << std::endl;
     Table t;
     Cell cell(0, 0, 1);
     cell.setDoubleValue(1.9885);
@@ -84,17 +83,11 @@ int main()
     fstream in;
     in.open("test1.csv", fstream::in);
     in.seekg(0, fstream::beg);
-    std::cout << 66 << std::endl;
     t.load(in);
-    std::cout << 67 << std::endl;
     t.setCell(0, 1, 1, 0, 5.989);
-    std::cout << 68 << std::endl;
     t.print();
-    std::cout << 69 << std::endl;
 
     Formula f("1", "2", '+');
-    std::cout << 70 << std::endl;
     t.setCell(0, 1, 3, 0, 0, "", f);
-    std::cout << 71 << std::endl;
     t.print();
 }
