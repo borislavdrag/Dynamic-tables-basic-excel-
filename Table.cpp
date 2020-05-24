@@ -31,12 +31,24 @@ void clearInputWhitespace(char* line)
 
 Table::Table(int nRows, int nCols)
 {
+    std::cout << 1 << std::endl;
     this->nRows = nRows;
     this->nCols = nCols;
 
     this->table = new Cell*[nRows];
+    std::cout << 8 << std::endl;
     for (int i = 0; i < nRows; i++)
         table[i] = new Cell[nCols];
+
+    for (int i = 0; i < nRows; i++)
+    {
+        for (int j = 0; j < nCols; j++)
+        {
+            table[i][j].setRow(i);
+            table[i][j].setCol(j);
+        }
+    }
+    std::cout << 9 << std::endl;
 }
 
 Table::~Table()
@@ -78,9 +90,8 @@ const Cell& Table::getCell(int row, int col) const
 
 //Setter
 
-void Table::setCell(int row, int col, int type, int intVal, double doubleVal, const char* stringVal)
+void Table::setCell(int row, int col, int type, int intVal, double doubleVal, const char* stringVal, const Formula& formulaVal)
 {   
-    // std::cout << "Type: " << type << std::endl;
     if (row >= this->nRows || col >= this->nCols)
     {
         if (row >= this->nRows)
@@ -117,7 +128,8 @@ void Table::setCell(int row, int col, int type, int intVal, double doubleVal, co
         }
     }
 
-    
+    /*table[row][col].setRow(row);
+    table[row][col].setCol(col);*/
     
     switch (type)
     {
@@ -130,13 +142,98 @@ void Table::setCell(int row, int col, int type, int intVal, double doubleVal, co
     case 2:
         table[row][col].setStringValue(stringVal); 
         break;
-    // case 3:
-    //     table[row][col].setFormulaValue(); 
-    //     break;
+    case 3:
+        std::cout << 101 << std::endl;
+        table[row][col].setFormulaValue(formulaVal); 
+        break;
     default:
         std::cout << "Invalid type" << std::endl;
         break;
     }
+}
+
+//Evaluators
+
+const int Table::evaluate(const char* side) const
+{
+    int len = strlen(side);
+
+    bool doubleFlag = true;
+    bool point = false;
+    bool formulaFlag = true;
+    bool intFlag = true;
+
+    // check if it's a double
+    for (int i = 0; i < len; i++)
+    {   
+        if (side[i] == '.')
+        {
+            if(!point)
+                point = true;
+            else
+            {
+                    doubleFlag = false;
+                    break;
+            }   
+        }
+        else if(side[i] > '9' || side[i] < '0')
+        {
+            doubleFlag = false;
+            break;
+        }
+    }
+
+    // check if it's int
+    for (int i = 0; i < len; i++)
+    {
+        if (side[i] > '9' || side[i] < '0')
+        {
+            intFlag = false;
+            break;
+        }
+    }
+    
+    if(len == 0) // handle empty cells
+        return 0;
+    else if (intFlag)
+        return atoi(side);
+    else if (doubleFlag)
+        return std::round(atof(side)*std::pow(10.0, PRECISION))/std::pow(10.0, PRECISION);
+    else
+        return 0;
+            
+}
+
+const int Table::evaluate(Formula& f) const
+{
+    switch (f.getOperation())
+    {
+    case '+':
+        return (evaluate(f.getLHS()) + evaluate(f.getRHS()));
+        break;
+    case '-':
+        return (evaluate(f.getLHS()) - evaluate(f.getRHS()));
+        break;
+    case '*':
+        return (evaluate(f.getLHS()) * evaluate(f.getRHS()));
+        break;
+    case '/':
+        if(evaluate(f.getRHS()) == 0)
+        {
+            std::cout << "ERROR: Division by 0" << std::endl;
+            return 0;
+        }
+        return (evaluate(f.getLHS()) / evaluate(f.getRHS()));
+        break;
+    case '^':
+        return pow(evaluate(f.getLHS()), evaluate(f.getRHS()));
+        break;
+    default:
+        std::cout << "ERROR: Unknown operation" << std::endl;
+        break;
+    }
+
+    return 0;
 }
 //Other functions
 
@@ -286,6 +383,7 @@ bool Table::load(std::fstream& in)
                     }
                 }
 
+                // check if it's int
                 for (int i = 0; i < p-prev; i++)
                 {
                     if (temp[i] > '9' || temp[i] < '0')

@@ -3,18 +3,22 @@
 
 Cell::Cell(int row, int col, int type)
 {
+    // std::cout << 5 << std::endl;
     this->idRow = row;
     this->idCol = col;
     this->type = type;
 
     this->intValue = 0;
     this->doubleValue = 0;
-    this->stringValue = new char[0];
-    // this->formulaValue = ;
+    this->stringValue = nullptr;
+    //this->formulaValue = nullptr;
 }
 
 Cell::~Cell()
 {
+    std::cout << this->idRow << ":" << this->idCol << std::endl;
+    this->formulaValue.print();
+    std::cout << this->doubleValue << std::endl;
     delete [] this->stringValue;
 }
 
@@ -59,7 +63,7 @@ const char* Cell::getStringValue() const
 {
     return this->stringValue;
 }
-const Formula Cell::getFormulaValue() const
+const Formula& Cell::getFormulaValue() const
 {
     return this->formulaValue;
 }
@@ -69,6 +73,14 @@ const Formula Cell::getFormulaValue() const
 void Cell::setType(int type)
 {
     this->type = type;
+}
+void Cell::setRow(int row)
+{
+    this->idRow = row;
+}
+void Cell::setCol(int col)
+{
+    this->idCol = col;
 }
 void Cell::setIntValue(int val)
 {
@@ -133,7 +145,7 @@ void Cell::free()
     delete [] this->stringValue;
     this->stringValue = new char[0];
 
-    // Delete formula !!!!!
+    this->formulaValue.free();
 }
 
 void Cell::copy(const Cell& other)
@@ -146,5 +158,5 @@ void Cell::copy(const Cell& other)
     this->stringValue = new char[strlen(other.stringValue) + 1];
     strcpy(this->stringValue, other.stringValue);
 
-    // Copy the formula !!!!!
+    this->formulaValue.copy(other.getFormulaValue());
 }

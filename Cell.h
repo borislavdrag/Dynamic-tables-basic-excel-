@@ -29,9 +29,11 @@ public:
     const int getIntValue() const;
     const double getDoubleValue() const;
     const char* getStringValue() const;
-    const Formula getFormulaValue() const;
+    const Formula& getFormulaValue() const;
 
     void setType(int);
+    void setRow(int);
+    void setCol(int);
     void setIntValue(int);
     void setDoubleValue(double);
     void setStringValue(const char*);
