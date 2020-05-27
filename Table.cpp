@@ -22,7 +22,6 @@ void clearInputWhitespace(char* line)
         if(line[i] == ' ')
         {
             p--;
-            
         }
     }
 }
@@ -125,8 +124,6 @@ void Table::setCell(int row, int col, int type, int intVal, double doubleVal, co
         }
     }
 
-    /*table[row][col].setRow(row);
-    table[row][col].setCol(col);*/
     
     switch (type)
     {
@@ -150,7 +147,7 @@ void Table::setCell(int row, int col, int type, int intVal, double doubleVal, co
 
 //Evaluators
 
-const int Table::evaluate(const char* side) const
+const double Table::evaluate(const char* side) const
 {
     int len = strlen(side);
 
@@ -200,7 +197,7 @@ const int Table::evaluate(const char* side) const
             
 }
 
-const int Table::evaluate(Formula& f) const
+const double Table::evaluate(const Formula& f) const
 {
     switch (f.getOperation())
     {
@@ -261,11 +258,11 @@ void Table::print()
                 if(len > paddings[j])
                     paddings[j] = len;
                 break;
-            // case 3:
-            //     int len = strlen(itoa(this->table[i][j].getIntValue());
-            //     if(len > paddings[j])
-            //         paddings[j] = len;
-            //     break;
+             case 3:
+                 len = numlen(evaluate(this->table[i][j].getFormulaValue()));
+                 if(len > paddings[j])
+                     paddings[j] = len;
+                 break;
            
             default:
                 break;
@@ -288,9 +285,9 @@ void Table::print()
             case 2:
                 std::cout << std::left << std::setw(paddings[j]) << table[i][j].getStringValue();
                 break;
-            // case 3:
-            //     std::cout << std::left << std::setw(paddings[j]) << table[i][j].getIntValue();
-            //     break;
+             case 3:
+                 std::cout << std::left << std::setw(paddings[j]) << evaluate(table[i][j].getFormulaValue());
+                 break;
             default:
                 std::cout << std::left << std::setw(paddings[j]) << "";
                 break;
@@ -389,13 +386,33 @@ bool Table::load(std::fstream& in)
                     }
                 }
                 
-                if(p-prev == 0) // handle empty cells
-                    {}
+                if (p - prev == 0){} // handle empty cells
                 else if (intFlag)
                     setCell(i, j, 0, atoi(temp));
                 else if (doubleFlag)
                     setCell(i, j, 1, 0, std::round(atof(temp)*std::pow(10.0, PRECISION))/std::pow(10.0, PRECISION));
-                // ADD FORMULA SUPPORT
+                else if (formulaFlag)
+                {
+                    int len = strlen(temp);
+                    char dump1[CELL_SIZE];
+                    char dump2[CELL_SIZE];
+                    for (int q = 1, endOfLHS = 1; i < len; q++, endOfLHS++)
+                    {
+                        if (temp[q] == '+' || temp[q] == '-' || temp[q] == '/' || temp[q] == '*' || temp[q] == '^')
+                        {
+                            char* newLHS = strncpy(dump1, temp + 1, endOfLHS - 1);
+                            newLHS[endOfLHS - 1] = '\0';
+                            char* newRHS = strncpy(dump2, temp + endOfLHS + 1, len - endOfLHS - 1);
+                            newRHS[len - endOfLHS - 1] = '\0';
+                            setCell(i, j, 3, 0, 0, "", Formula(newLHS, newRHS, temp[q]));
+                            break;
+                        }
+                        else if (endOfLHS == len-2)
+                        {
+                            std::cout << "Wrong formula" << std::endl;
+                        }
+                    }
+                }
                 else
                     setCell(i, j, 2, 0, 0, temp);
 
@@ -419,6 +436,7 @@ bool Table::load(std::fstream& in)
 }
 bool Table::save(std::fstream& out)
 {
+    Formula f;
     if(!out.good())
         return 0;
 
@@ -451,13 +469,14 @@ bool Table::save(std::fstream& out)
                 else
                     out << "\n";
                 break;
-                // case 3:
-                // out << this->table[i][j].getIntValue();
-                // if (j < this->nCols - 1)
-                //     out << ",";
-                // else
-                //     out << "\n";
-                // break;
+                case 3:
+                 f = table[i][j].getFormulaValue();
+                 out << "=" << f.getLHS() << f.getOperation() << f.getRHS();
+                 if (j < this->nCols - 1)
+                     out << ",";
+                 else
+                     out << "\n";
+                 break;
             
             default:
                 if (j < this->nCols - 1)

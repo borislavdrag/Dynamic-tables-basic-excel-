@@ -23,8 +23,8 @@ const int getNRows() const;
 const int getNCols() const;
 const Cell& getCell(int, int) const;
 
-const int evaluate(const char* side) const;
-const int evaluate(Formula&) const;
+const double evaluate(const char* side) const;
+const double evaluate(const Formula&) const;
 
 void setCell(int, int, int, int =0, double =0, const char* = nullptr, const Formula& = Formula()); //add formula !!!!!
 

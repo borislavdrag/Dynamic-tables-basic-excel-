@@ -30,5 +30,5 @@ public:
 
     void free();
     void copy(const Formula&);
-    void print();
+    void print() const;
 };

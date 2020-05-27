@@ -91,6 +91,7 @@ void Cell::setDoubleValue(double val)
 void Cell::setStringValue(const char* val)
 {
     this->type = 2;
+    this->stringValue = new char[strlen(val) + 1];
     // delete [] this->stringValue; ?????????
     strcpy(this->stringValue, val);
 }
@@ -122,9 +123,9 @@ void Cell::printVal()
     case 2:
         std::cout << getStringValue();
         break;
-    // case 3:
-    //     std::cout << getFormulaValue();
-    //     break;
+     case 3:
+         std::cout << "=" << getFormulaValue().getLHS() << getFormulaValue().getOperation() << getFormulaValue().getRHS() << std::endl;
+         break;
     
     default:
         break;

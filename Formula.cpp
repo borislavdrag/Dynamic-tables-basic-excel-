@@ -65,7 +65,7 @@ void Formula::setOperation(const char op)
 }
 
 //Other functions
-void Formula::print()
+void Formula::print() const
 {
     std::cout << "=" << LHS << operation << RHS << std::endl;
 }

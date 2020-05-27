@@ -63,10 +63,10 @@ int main()
     cell.setDoubleValue(1.9885);
     cell.print();
 
-    // t.setCell(0, 0, 0, 5);
-    // t.setCell(1, 0, 0, 177);
-    // t.setCell(1, 2, 2, 0, 0, "abcd");
-    // t.print();
+     t.setCell(0, 0, 0, 5);
+     t.setCell(1, 0, 0, 177);
+     t.setCell(1, 2, 2, 0, 0, "abcd");
+     t.print();
 
     // t.setCell(3, 1, 0, 66666);
     // t.print();
@@ -76,9 +76,6 @@ int main()
     // t.setCell(11, 11, 0, 42, 0, "bobby is weird");
     // t.print();
 
-    // fstream out;
-    // out.open("test1.csv", fstream::out | fstream::trunc);
-    // t.save(out);
 
     fstream in;
     in.open("test1.csv", fstream::in);
@@ -87,7 +84,20 @@ int main()
     t.setCell(0, 1, 1, 0, 5.989);
     t.print();
 
-    Formula f("1", "2", '+');
+    Formula f("3", "566", '*');
     t.setCell(0, 1, 3, 0, 0, "", f);
     t.print();
+
+    fstream out;
+    out.open("test2.csv", fstream::out | fstream::trunc);
+    t.save(out);
+    out.close();
+
+    Table t2;
+    fstream in2;
+    in2.open("test2.csv", fstream::in);
+    in2.seekg(0, fstream::beg);
+    t2.load(in2);
+    //t.setCell(0, 1, 1, 0, 5.989);
+    t2.print();
 }
