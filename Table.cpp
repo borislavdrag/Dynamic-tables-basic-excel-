@@ -5,6 +5,8 @@
 
 int numlen(int a)
 {
+    if (a == 0)
+        return 1;
     return trunc(log10(a)) + 1;
 }
 
@@ -155,6 +157,12 @@ const double Table::evaluate(const char* side) const
     bool point = false;
     bool formulaFlag = true;
     bool intFlag = true;
+    bool cellFlag = false;
+
+
+    if (side[0] == 'R' && side[2] == 'C' && strlen(side) == 4 && side[1] >= '0'
+        && side[1] <= '9' && side[3] >= '0' && side[3] <= '9' && (side[1] - '0') < nRows && (side[3]-'0') < nCols)
+        cellFlag = true;
 
     // check if it's a double
     for (int i = 0; i < len; i++)
@@ -186,8 +194,27 @@ const double Table::evaluate(const char* side) const
         }
     }
     
-    if(len == 0) // handle empty cells
+    if (len == 0) // handle empty cells
         return 0;
+    else if (cellFlag)
+    {
+        Cell c = table[side[1] - '0'][side[3] - '0'];
+
+        switch (c.getType())
+        {
+        case 0:
+             return c.getIntValue();
+        case 1:
+            return c.getDoubleValue();
+        case 2:
+            return 0;
+        case 3:
+            return evaluate(c.getFormulaValue());
+        default:
+            return 0;
+        }
+        
+    }
     else if (intFlag)
         return atoi(side);
     else if (doubleFlag)
@@ -396,7 +423,7 @@ bool Table::load(std::fstream& in)
                     int len = strlen(temp);
                     char dump1[CELL_SIZE];
                     char dump2[CELL_SIZE];
-                    for (int q = 1, endOfLHS = 1; i < len; q++, endOfLHS++)
+                    for (int q = 1, endOfLHS = 1; q < len; q++, endOfLHS++)
                     {
                         if (temp[q] == '+' || temp[q] == '-' || temp[q] == '/' || temp[q] == '*' || temp[q] == '^')
                         {

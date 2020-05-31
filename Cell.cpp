@@ -91,8 +91,11 @@ void Cell::setDoubleValue(double val)
 void Cell::setStringValue(const char* val)
 {
     this->type = 2;
+    if (this->stringValue != nullptr)
+    {
+    delete[] this->stringValue;
+    }
     this->stringValue = new char[strlen(val) + 1];
-    // delete [] this->stringValue; ?????????
     strcpy(this->stringValue, val);
 }
 void Cell::setFormulaValue(const Formula& val)
@@ -140,7 +143,7 @@ void Cell::free()
     this->doubleValue = 0;
 
     delete [] this->stringValue;
-    this->stringValue = new char[0];
+    /*this->stringValue = nullptr;*/
 
     this->formulaValue.free();
 }
@@ -152,8 +155,11 @@ void Cell::copy(const Cell& other)
     this->intValue = other.intValue;
     this->doubleValue = other.doubleValue;
 
-    this->stringValue = new char[strlen(other.stringValue) + 1];
-    strcpy(this->stringValue, other.stringValue);
+    if (other.stringValue)
+    {
+        this->stringValue = new char[strlen(other.stringValue) + 1];
+        strcpy(this->stringValue, other.stringValue);
+    }
 
     this->formulaValue.copy(other.getFormulaValue());
 }
